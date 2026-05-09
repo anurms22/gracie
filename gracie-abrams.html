@@ -1,0 +1,2140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gracie Abrams — The Deep Dive</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #fdf8ee;
+    --cream2: #f7f0dc;
+    --cream3: #efe7cc;
+    --sky: #c8dff5;
+    --sky2: #a8c8e8;
+    --sky3: #7aafd4;
+    --sky4: #4d8fba;
+    --mist: #ddeef8;
+    --sand: #e8d9b8;
+    --gold: #c9a84c;
+    --gold2: #e2c06a;
+    --dusty: #8fa8b8;
+    --bg: #f9f3e3;
+    --bg2: #f3ead0;
+    --bg3: #ede0c0;
+    --card: #fdf9f0;
+    --card2: #f5edda;
+    --text: #2c2216;
+    --text2: #5a4a35;
+    --text3: #7a6a55;
+    --border: rgba(180,155,100,0.18);
+    --border2: rgba(180,155,100,0.30);
+    --accent: #4d8fba;
+    --accent2: #7aafd4;
+    --accent3: #a8c8e8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.65;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* subtle texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse at 20% 10%, rgba(200,223,245,0.25) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 80%, rgba(201,168,76,0.10) 0%, transparent 55%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(150deg, #ddeef8 0%, #f3ead0 45%, #fdf8ee 100%);
+    padding: 3rem 1.25rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border2);
+    z-index: 1;
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    top: -40px; left: 50%;
+    transform: translateX(-50%);
+    width: 360px; height: 280px;
+    background: radial-gradient(ellipse, rgba(122,175,212,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  header::after {
+    content: '✦';
+    position: absolute;
+    bottom: 12px; right: 24px;
+    font-size: 10px;
+    color: var(--sky3);
+    opacity: 0.5;
+  }
+
+  .star-badge {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--sky2);
+    background: rgba(200,223,245,0.25);
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.6rem, 9vw, 4.2rem);
+    font-weight: 700;
+    font-style: italic;
+    color: var(--text);
+    line-height: 1.05;
+    margin-bottom: 0.4rem;
+    background: linear-gradient(135deg, #2c2216 0%, #4d8fba 60%, #7aafd4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  header .tagline {
+    font-size: 13px;
+    color: var(--text3);
+    font-weight: 300;
+    font-style: italic;
+    margin-bottom: 0.25rem;
+  }
+
+  .born-tag {
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* STATS ROW */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin-top: 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .stat-item {
+    background: var(--card2);
+    padding: 1rem 0.5rem;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: var(--accent);
+    display: block;
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 9.5px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 4px;
+    display: block;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border2);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+
+  .nav-inner {
+    display: flex;
+    gap: 0;
+    justify-content: center;
+    min-width: max-content;
+    margin: 0 auto;
+    padding: 0 0.5rem;
+  }
+
+  nav button {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text3);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11.5px;
+    font-weight: 400;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 0.85rem 0.9rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  nav button.active {
+    color: var(--accent);
+    border-bottom-color: var(--sky3);
+    font-weight: 500;
+  }
+
+  nav button:hover:not(.active) {
+    color: var(--text2);
+  }
+
+  /* MAIN */
+  main {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 1.5rem 1.25rem 4rem;
+    overflow: visible;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section { display: none; overflow: visible; }
+  .section.active { display: block; }
+
+  /* SECTION HEADER */
+  .section-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--text);
+    margin-bottom: 0.15rem;
+  }
+
+  .section-header p {
+    font-size: 12.5px;
+    color: var(--text3);
+    font-style: italic;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.1rem 1.2rem;
+    margin-bottom: 0.85rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--sky3), transparent);
+    opacity: 0.5;
+  }
+
+  .card h3 {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 0.45rem;
+  }
+
+  .card p {
+    font-size: 12.5px;
+    color: var(--text3);
+    line-height: 1.65;
+  }
+
+  /* BADGES */
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+
+  .badge-sky { background: rgba(200,223,245,0.35); color: var(--sky4); border: 1px solid rgba(122,175,212,0.25); }
+  .badge-gold { background: rgba(201,168,76,0.12); color: #9a7430; border: 1px solid rgba(201,168,76,0.25); }
+  .badge-sand { background: rgba(232,217,184,0.40); color: var(--text2); border: 1px solid var(--border2); }
+  .badge-mist { background: rgba(221,238,248,0.50); color: #3a7aa0; border: 1px solid rgba(168,200,232,0.3); }
+  .badge-pink { background: rgba(220,180,190,0.20); color: #8a4558; border: 1px solid rgba(220,180,190,0.3); }
+  .badge-green { background: rgba(160,210,180,0.20); color: #3a7055; border: 1px solid rgba(160,210,180,0.3); }
+
+  /* ALBUM CARDS */
+  .album-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 1rem;
+    overflow: visible;
+  }
+
+  .album-header {
+    background: var(--card2);
+    padding: 1rem 1.2rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+    border-radius: 13px 13px 0 0;
+  }
+
+  .album-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--text);
+  }
+
+  .album-meta {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+
+  .album-year {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--sky3);
+    opacity: 0.7;
+    flex-shrink: 0;
+  }
+
+  /* TRACK LIST */
+  .track {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 0.65rem 1.2rem;
+    border-bottom: 1px solid rgba(180,155,100,0.09);
+    transition: background 0.15s;
+  }
+
+  .track:last-child { border-bottom: none; }
+  .track:hover { background: rgba(200,223,245,0.10); }
+
+  .track-num {
+    font-size: 11px;
+    color: var(--text3);
+    min-width: 18px;
+    margin-top: 2px;
+    font-weight: 300;
+    opacity: 0.6;
+  }
+
+  .track-star { color: var(--gold); }
+
+  .track-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+
+  .track-note {
+    font-size: 11.5px;
+    color: var(--text3);
+    line-height: 1.5;
+  }
+
+  /* PERSON CARDS */
+  .person-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .person-card:last-child { border-bottom: none; }
+
+  .avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11.5px;
+    font-weight: 500;
+    flex-shrink: 0;
+    border: 1px solid var(--border2);
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .person-card h4 {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+
+  .person-card p {
+    font-size: 12px;
+    color: var(--text3);
+    line-height: 1.6;
+  }
+
+  /* THEORY CARDS */
+  .theory {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--sky3);
+    border-radius: 0 10px 10px 0;
+    padding: 0.85rem 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .theory h4 {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent);
+    margin-bottom: 0.35rem;
+    line-height: 1.4;
+  }
+
+  .theory p {
+    font-size: 12px;
+    color: var(--text3);
+    line-height: 1.65;
+  }
+
+  /* TIMELINE */
+  .timeline-item {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 1rem;
+    position: relative;
+  }
+
+  .timeline-line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .t-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--sky3);
+    border: 2px solid var(--bg);
+    margin-top: 4px;
+    flex-shrink: 0;
+  }
+
+  .t-line {
+    width: 1px;
+    flex: 1;
+    background: var(--border2);
+    margin-top: 4px;
+  }
+
+  .timeline-year {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    margin-top: 2px;
+    min-width: 70px;
+  }
+
+  .timeline-content h4 {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 3px;
+    line-height: 1.4;
+  }
+
+  .timeline-content p {
+    font-size: 12px;
+    color: var(--text3);
+    line-height: 1.6;
+  }
+
+  /* FUN FACTS */
+  .fact-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .fact-item:last-child { border-bottom: none; }
+
+  .fact-icon {
+    font-size: 1.15rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .fact-text {
+    font-size: 13px;
+    color: var(--text3);
+    line-height: 1.65;
+  }
+
+  .fact-text strong {
+    color: var(--text2);
+    font-weight: 500;
+  }
+
+  /* SUBSECTION LABELS */
+  .sub-label {
+    font-size: 10.5px;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--sky4);
+    font-weight: 500;
+    margin: 1.5rem 0 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .sub-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* CONNECTIONS GRID */
+  .conn-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  @media (max-width: 420px) {
+    .conn-grid { grid-template-columns: 1fr; }
+  }
+
+  .conn-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.85rem;
+  }
+
+  .conn-card h4 {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text2);
+    margin-bottom: 4px;
+  }
+
+  .conn-card p {
+    font-size: 11.5px;
+    color: var(--text3);
+    line-height: 1.55;
+  }
+
+  /* STICKY ALBUM HEADER */
+  .album-header-sticky {
+    position: sticky;
+    top: 46px;
+    z-index: 50;
+    background: var(--card2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border2);
+    padding: 0.55rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: inset 3px 0 0 var(--sky3), 0 4px 16px rgba(44,34,22,0.08);
+  }
+
+  .sticky-album-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--text);
+  }
+
+  .sticky-album-year {
+    font-size: 11px;
+    color: var(--text3);
+    margin-left: auto;
+    letter-spacing: 0.05em;
+  }
+
+  /* DELUXE BANNER */
+  .deluxe-banner {
+    background: rgba(201,168,76,0.07);
+    border: 1px solid rgba(201,168,76,0.20);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin: 0.5rem 1.2rem 0.5rem;
+    font-size: 12px;
+    color: #9a7430;
+    line-height: 1.5;
+  }
+
+  /* TOUR CARDS */
+  .tour-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 1rem;
+    overflow: visible;
+  }
+
+  .tour-header {
+    background: var(--card2);
+    padding: 1rem 1.2rem;
+    border-bottom: 1px solid var(--border);
+    border-radius: 13px 13px 0 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .tour-header-sticky {
+    position: sticky;
+    top: 46px;
+    z-index: 50;
+    background: var(--card2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border2);
+    padding: 0.55rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: inset 3px 0 0 var(--gold), 0 4px 16px rgba(44,34,22,0.08);
+  }
+
+  .sticky-tour-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--text);
+  }
+
+  .tour-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--text);
+  }
+
+  .tour-meta {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+
+  .tour-year {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--gold);
+    opacity: 0.8;
+    flex-shrink: 0;
+  }
+
+  .tour-date {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 0.55rem 1.2rem;
+    border-bottom: 1px solid rgba(180,155,100,0.09);
+    transition: background 0.15s;
+  }
+
+  .tour-date:last-child { border-bottom: none; }
+  .tour-date:hover { background: rgba(200,223,245,0.08); }
+
+  .td-date {
+    font-size: 11px;
+    color: var(--sky4);
+    min-width: 90px;
+    font-weight: 400;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  .td-venue {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.3;
+    margin-bottom: 2px;
+  }
+
+  .td-note {
+    font-size: 11px;
+    color: var(--text3);
+    line-height: 1.5;
+  }
+
+  .td-special {
+    font-size: 10.5px;
+    background: rgba(200,223,245,0.35);
+    color: var(--sky4);
+    border: 1px solid rgba(122,175,212,0.2);
+    border-radius: 4px;
+    padding: 2px 7px;
+    display: inline-block;
+    margin-top: 3px;
+  }
+
+  /* MV CARDS */
+  .mv-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    margin-bottom: 0.65rem;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .mv-icon {
+    width: 36px;
+    height: 36px;
+    background: rgba(200,223,245,0.35);
+    border: 1px solid var(--sky2);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .mv-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+
+  .mv-note {
+    font-size: 11.5px;
+    color: var(--text3);
+    line-height: 1.5;
+  }
+
+  /* DATING TIMELINE */
+  .dating-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 10px 10px 0;
+    padding: 0.9rem 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .dating-card h4 {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+
+  .dating-card .period {
+    font-size: 11px;
+    color: var(--gold);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+    display: block;
+  }
+
+  .dating-card p {
+    font-size: 12px;
+    color: var(--text3);
+    line-height: 1.65;
+  }
+
+  /* BACK TO TOP BUTTON */
+  #back-to-top {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.25rem;
+    z-index: 200;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--sky3);
+    color: #fff;
+    border: 1px solid var(--sky2);
+    font-size: 1.1rem;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 12px rgba(77,143,186,0.3);
+  }
+
+  #back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  #back-to-top:hover {
+    background: var(--sky4);
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 2rem 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text3);
+    font-style: italic;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* FEATURE NOTE */
+  .feature-note {
+    font-size: 11px;
+    color: var(--sky4);
+    font-style: italic;
+    margin-left: 4px;
+  }
+
+  /* responsive track note */
+  @media (max-width: 480px) {
+    .td-date { min-width: 70px; font-size: 10px; }
+    .tour-date { gap: 7px; padding: 0.5rem 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="star-badge">✦ The Deep Dive ✦</span>
+  <h1>Gracie Abrams</h1>
+  <p class="tagline">"I wanna say the unsayable"</p>
+  <p class="born-tag">Born September 7, 1999 · Los Angeles, CA · Interscope Records</p>
+  <div class="stats-row">
+    <div class="stat-item">
+      <span class="stat-num">2</span>
+      <span class="stat-label">Studio Albums</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">2</span>
+      <span class="stat-label">EPs</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">#1</span>
+      <span class="stat-label">UK / AUS / CAN</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">81+</span>
+      <span class="stat-label">Tour Shows</span>
+    </div>
+  </div>
+</header>
+
+<nav id="nav">
+  <div class="nav-inner">
+    <button class="active" onclick="show('discography', this)">Discography</button>
+    <button onclick="show('videos', this)">Music Videos</button>
+    <button onclick="show('tours', this)">Tours</button>
+    <button onclick="show('connections', this)">Connections</button>
+    <button onclick="show('theories', this)">Theories</button>
+    <button onclick="show('dating', this)">Dating History</button>
+    <button onclick="show('facts', this)">Fun Facts</button>
+  </div>
+</nav>
+
+<main>
+
+<!-- ══════════════════════════════ DISCOGRAPHY ══════════════════════════════ -->
+<div id="discography" class="section active">
+  <div class="section-header">
+    <h2>Discography</h2>
+    <p>Every EP, album, deluxe edition, feature & standalone single — annotated</p>
+  </div>
+
+  <!-- MEAN IT single -->
+  <div class="sub-label">Debut Single</div>
+  <div class="album-card">
+    <div class="album-header">
+      <div>
+        <div class="badge badge-sand">Standalone Single</div>
+        <div class="album-title">"Mean It"</div>
+        <div class="album-meta">Released: October 18, 2019 · Interscope Records</div>
+      </div>
+      <div class="album-year">2019</div>
+    </div>
+    <div class="track">
+      <div class="track-num">1</div>
+      <div>
+        <div class="track-name">Mean It</div>
+        <div class="track-note">Gracie's commercial debut at age 19. A spare, bedroom-pop confession about wanting someone to mean what they say — produced by Blake Slatkin, her then-boyfriend. Caught the attention of Lorde almost immediately and set the template for everything to come: whispered vocals, devastatingly simple imagery, and a gut-punch of an emotional hook.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MINOR EP -->
+  <div class="sub-label">EP I</div>
+  <div class="album-card">
+    <div class="album-header-sticky">
+      <span class="sticky-album-title">minor</span>
+      <span class="sticky-album-year">2020</span>
+    </div>
+    <div class="album-header">
+      <div>
+        <div class="badge badge-sky">EP · 7 Tracks</div>
+        <div class="album-title">minor</div>
+        <div class="album-meta">Released: July 14, 2020 · Produced by Blake Slatkin, Jim-E Stack · Interscope Records</div>
+      </div>
+      <div class="album-year">2020</div>
+    </div>
+    <div class="track">
+      <div class="track-num">1</div>
+      <div>
+        <div class="track-name">Friend</div>
+        <div class="track-note">Opens the EP on a note of emotional distance — reflecting on someone who feels both close and impossibly far away. Lyrically explores the gap between what a friendship looks like and what it actually feels like from the inside.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">2</div>
+      <div>
+        <div class="track-name">21 <span class="feature-note">★ Lead Single</span></div>
+        <div class="track-note">Lo-fi thumps that feel like a house party you're watching from the outside. Opens with the gut-punch: "I missed your 21st birthday." A quiet devastation about the way growing up means growing apart from people you loved when you were young. One of her most beloved tracks.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">3</div>
+      <div>
+        <div class="track-name">Under / Over</div>
+        <div class="track-note">A restless meditation on the cyclical nature of feelings — trying to parse what's real when emotions keep inverting. Reflects Gracie's knack for naming feelings that don't have clean names.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">4</div>
+      <div>
+        <div class="track-name">tehe</div>
+        <div class="track-note">Named after a verbal tic Gracie says she "overuses" — but the song isn't a joke. It works through the aftermath of a broken relationship, from the hope that things could've been salvaged to acceptance that they couldn't. Named after a phrase that doesn't appear in the actual lyrics.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">5</div>
+      <div>
+        <div class="track-name">I miss you, I'm sorry <span class="feature-note">★ Single</span></div>
+        <div class="track-note">Built on a simple piano motif that opens into expressive strings, this is Gracie at her most raw: longing over a lost relationship to the point of missing its turbulent parts ("I miss fighting in your old apartment / Breaking dishes when you're disappointed"). The song that would inspire Olivia Rodrigo to write "drivers license."</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">6</div>
+      <div>
+        <div class="track-name">Long Sleeves <span class="feature-note">★ Single</span></div>
+        <div class="track-note">A ballad about recognizing you're not ready to love someone new while still working on yourself. Gracie has described it as the EP's moment of "closure" — and she tried to write this song starting at age 14, finally cracking it years later. The emotional resolution that closes out the breakup narrative.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">7</div>
+      <div>
+        <div class="track-name">minor</div>
+        <div class="track-note">The title track, written at age 17 — the first song Gracie felt was entirely, unmistakably her. About the frustration of feeling stuck, small, and unmoving while the world seems to shift around you. She's described it as the song where she stopped trying to emulate anyone else's sound and found her own.</div>
+      </div>
+    </div>
+    <div class="deluxe-banner">🎵 <strong>Also released in 2021:</strong> Standalone singles "Stay" (Jan 2020), "Unlearn" (feat. Benny Blanco, March 2021) and "Mess It Up" (May 2021) preceded her second EP. The EP was reissued on red vinyl for its 5th anniversary in 2025.</div>
+  </div>
+
+  <!-- Unlearn -->
+  <div class="sub-label">Singles (2021)</div>
+  <div class="album-card">
+    <div class="album-header">
+      <div>
+        <div class="badge badge-mist">Feature / Collab Singles</div>
+        <div class="album-title">Benny Blanco & Gracie Abrams — "Unlearn" / "Mess It Up"</div>
+        <div class="album-meta">March & May 2021 · Standalone Singles</div>
+      </div>
+      <div class="album-year">2021</div>
+    </div>
+    <div class="track">
+      <div class="track-num">—</div>
+      <div>
+        <div class="track-name">Unlearn <span class="feature-note">(feat. Benny Blanco)</span></div>
+        <div class="track-note">A collaboration with super-producer Benny Blanco exploring the painful process of trying to stop loving someone who hurt you. Lush, layered production that felt notably bigger than Gracie's EP work — a sign of things to come.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">—</div>
+      <div>
+        <div class="track-name">Mess It Up</div>
+        <div class="track-note">A standalone single released in May 2021 — a tender, anxious portrait of the fear of ruining something good before it even has a chance to grow. Fans immediately attached to its raw self-awareness.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THIS IS WHAT IT FEELS LIKE EP -->
+  <div class="sub-label">EP II</div>
+  <div class="album-card">
+    <div class="album-header-sticky">
+      <span class="sticky-album-title">This Is What It Feels Like</span>
+      <span class="sticky-album-year">2021</span>
+    </div>
+    <div class="album-header">
+      <div>
+        <div class="badge badge-sky">EP · 12 Tracks</div>
+        <div class="album-title">This Is What It Feels Like</div>
+        <div class="album-meta">Released: November 12, 2021 · Produced by Aaron Dessner, Joel Little, Blake Slatkin · Interscope Records</div>
+      </div>
+      <div class="album-year">2021</div>
+    </div>
+    <div class="track">
+      <div class="track-num">1</div>
+      <div>
+        <div class="track-name">Feels Like <span class="feature-note">★ Lead Single</span></div>
+        <div class="track-note">The EP's opener and lead single — an immediate escalation in sonic scope. Feels Like captures the terrifying early stages of falling for someone, the electricity of it mixed with the dread of what happens if it goes wrong. Bright, shimmering production marks Gracie's first serious collaboration with Aaron Dessner.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">2</div>
+      <div>
+        <div class="track-name">Rockland <span class="feature-note">★ Single · co-produced by Aaron Dessner</span></div>
+        <div class="track-note">Named after Rockland County, New York — where Aaron Dessner's Long Pond Studio is located. A wistful, place-specific song about wanting to return somewhere that felt like home but no longer quite is. Gracie's first deep collaboration with Dessner, who'd go on to define her next three projects.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">3</div>
+      <div>
+        <div class="track-name">For Real This Time</div>
+        <div class="track-note">A confrontation with yourself: the specific kind of self-deception where you tell yourself you're over something while clearly not being over it at all. The "for real this time" of the title has a weary, ironic edge — she's said this before and doesn't quite believe herself.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">4</div>
+      <div>
+        <div class="track-name">Camden</div>
+        <div class="track-note">A song built around a specific place, filled with quiet observations that accumulate into something heartbreaking. Gracie excels at this kind of hyper-specific geography of feeling — naming a place as a way of naming an emotion that doesn't have a word.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">5</div>
+      <div>
+        <div class="track-name">The Bottom</div>
+        <div class="track-note">One of the EP's darker emotional centers — an honest look at rock-bottom moments and the strange intimacy they create. "I told you I was down bad" is an early example of Gracie's willingness to render herself unglamorously, which is part of what makes her fanbase trust her so completely.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">6</div>
+      <div>
+        <div class="track-name">Wishful Thinking</div>
+        <div class="track-note">A gentle but devastating song about staying in something past its expiration date — not because you believe it'll work, but because wanting it to work is its own comfort. Soft, patient production that matches the feeling of dragging something out.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">7</div>
+      <div>
+        <div class="track-name">Older</div>
+        <div class="track-note">A meditation on aging and the loss of a particular kind of innocence — the version of yourself that believed everything would be fine. Gracie's gift for compression is in full force here: this is a song about years of slow change distilled into a few clean, aching lines.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">8</div>
+      <div>
+        <div class="track-name">Better</div>
+        <div class="track-note">The measured, adult voice on the EP — a song about recognizing a pattern in yourself and wanting, genuinely, to break it. Quieter and more internal than the surrounding tracks, with production that matches its contemplative mood.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">9</div>
+      <div>
+        <div class="track-name">Hard To Sleep</div>
+        <div class="track-note">Exactly what it sounds like — insomnia as emotional symptom, the racing mind at 3am that replays every wrong turn. One of the EP's most relatable tracks and a fan favorite on early setlists.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">10</div>
+      <div>
+        <div class="track-name">Augusta</div>
+        <div class="track-note">Another place-as-feeling song. Augusta carries the specific melancholy of wanting to leave somewhere before you actually leave — the pre-emptive homesickness of a person on the edge of a major change. Many fans interpret it as being about leaving for college or leaving a relationship.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">11</div>
+      <div>
+        <div class="track-name">Painkillers</div>
+        <div class="track-note">A song about numbing yourself — but not in a simple or moralistic way. More interested in the texture of why someone reaches for numbness and what that actually feels like from inside the experience. One of the EP's most sonically interesting cuts.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">12</div>
+      <div>
+        <div class="track-name">Alright</div>
+        <div class="track-note">The EP's quiet resolution — the specific flavor of "alright" that means "I'm surviving, not thriving, and I'm choosing to accept that for now." A gentle, honest close that doesn't promise too much. One of the tracks Gracie frequently mentions as personally meaningful.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GOOD RIDDANCE -->
+  <div class="sub-label">Debut Album</div>
+  <div class="album-card">
+    <div class="album-header-sticky">
+      <span class="sticky-album-title">Good Riddance</span>
+      <span class="sticky-album-year">2023</span>
+    </div>
+    <div class="album-header">
+      <div>
+        <div class="badge badge-gold">Album · 12 Tracks · Grammy Nominated</div>
+        <div class="album-title">Good Riddance</div>
+        <div class="album-meta">Released: February 24, 2023 · Produced by Aaron Dessner (all tracks) · Interscope Records<br>Grammy nomination: Best New Artist (66th Grammys, 2024)</div>
+      </div>
+      <div class="album-year">2023</div>
+    </div>
+    <div class="track">
+      <div class="track-num">1</div>
+      <div>
+        <div class="track-name">Best</div>
+        <div class="track-note">The album's opening statement and an immediate gut-punch: "You were there all the time / You're the worst of my crimes / You fell hard / I thought good riddance." A song about the strange relief that comes after a relationship finally ends — not joy, exactly, but the particular exhale of someone who's been holding their breath for too long. Sets the album's themes of accountability and self-reckoning in motion instantly.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">2</div>
+      <div>
+        <div class="track-name">I know it won't work <span class="feature-note">★ Single</span></div>
+        <div class="track-note">A fan-beloved track about knowing full well that something isn't going to work but being unable to stop yourself from trying anyway. The title is the whole thesis, and the song earns it — building a case for the specific irrationality of hope. Reached the Pop Airplay chart despite not cracking the Hot 100.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">3</div>
+      <div>
+        <div class="track-name">Full machine</div>
+        <div class="track-note">A more expansive, guitar-driven track — one of the album's few moments where the production swells rather than whispers. Explores the exhaustion of performing normalcy when you're anything but: the "full machine" of the title is a person running on empty, keeping everything moving through sheer mechanical momentum.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">4</div>
+      <div>
+        <div class="track-name">Where do we go now? <span class="feature-note">★ Single · MV</span></div>
+        <div class="track-note">Released as the album's second single alongside an accompanying music video. A post-breakup question addressed directly to an ex — not accusatory, but genuinely uncertain. One of the album's more outward-facing tracks, less about Gracie's interior and more about the shared wreckage two people leave behind. Billboard named it one of the 96 best songs of 2023.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">5</div>
+      <div>
+        <div class="track-name">I should hate you</div>
+        <div class="track-note">The album's clearest portrait of post-breakup cognitive dissonance — the simultaneous desire to hate someone and the frustrating inability to do so. Gracie approaches it without self-pity, which makes it land harder: she's not asking for sympathy, just naming something true.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">6</div>
+      <div>
+        <div class="track-name">Will you cry?</div>
+        <div class="track-note">A song that dares to ask a question that's usually considered undignified to ask: will you actually mourn this when it's gone? The vulnerability of needing to know you mattered. One of the album's quieter tracks but one that hits disproportionately hard for how understated it is.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">7</div>
+      <div>
+        <div class="track-name">Amelie <span class="feature-note">★ Single</span></div>
+        <div class="track-note">Named after a person, not the film — a song about a woman Gracie met once who "sort of ripped her open." Fans have long speculated who Amelie is; Gracie has been characteristically cryptic. Variety named it one of the 35 best songs of 2023. Notably, this song was debuted live at a soundcheck in Copenhagen in May 2022 — months before Good Riddance was announced.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">8</div>
+      <div>
+        <div class="track-name">Difficult <span class="feature-note">★ Lead Single · MV</span></div>
+        <div class="track-note">Released in October 2022 as the first official signal that a debut album was coming. A song about being difficult to love — but not in the self-deprecating way that usually framing implies. More like: being complex, requiring work, and wondering if you've asked too much. One of her most-streamed tracks and a live fan favorite.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">9</div>
+      <div>
+        <div class="track-name">This is what the drugs are for</div>
+        <div class="track-note">Gracie's most emotionally raw track on the album — and one of the darkest. Not a romanticization of substance use, but a clinical, unflinching acknowledgment of the specific emotional pain that makes someone reach for numbing. Written with Aaron Dessner and co-produced with Brian Eno's influence on the adjacent track.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">10</div>
+      <div>
+        <div class="track-name">Fault line</div>
+        <div class="track-note">The geological metaphor is perfect: a fault line is stable right up until it isn't, and the disaster that follows has been building for ages. Gracie applies this to the slow unraveling of a relationship — the invisible accumulation of damage beneath the surface.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">11</div>
+      <div>
+        <div class="track-name">The blue</div>
+        <div class="track-note">Named after someone specific — "You live in Hollywood, you're half an hour from me" — but the proximity feels like distance. One of the album's most atmospheric tracks. The color blue here is less about sadness and more about the particular tonal quality of feeling disconnected from someone physically close.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">12</div>
+      <div>
+        <div class="track-name">Right now <span class="feature-note">(co-written/produced with Brian Eno)</span></div>
+        <div class="track-note">The album's closing track and its most unusual collaboration — co-written and co-produced with ambient music legend Brian Eno. A reflective, almost meditative close that asks what remains when all the noise settles. Gracie working with Eno is one of the album's most surprising and rewarding creative leaps.</div>
+      </div>
+    </div>
+    <div class="deluxe-banner">✦ <strong>Good Riddance (Deluxe)</strong> — Released June 16, 2023 · 4 bonus tracks</div>
+    <div class="track">
+      <div class="track-num">13</div>
+      <div>
+        <div class="track-name">Block me out <span class="feature-note">★ Single · Released April 2022</span></div>
+        <div class="track-note">Released a full year before the deluxe album — April 2022, when album rumors were just starting to circulate. A song about the desperate wish that someone would just stop mattering to you: block me out, so I can stop thinking about you. The sentence-case styling of the title sparked fan speculation about a new era.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">14</div>
+      <div>
+        <div class="track-name">Unsteady</div>
+        <div class="track-note">A portrait of emotional instability — not as crisis, but as a chronic condition. The feeling of being fundamentally off-balance even during periods of apparent calm. Gracie renders this without drama, which somehow makes it more unsettling than a more theatrical treatment would.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">15</div>
+      <div>
+        <div class="track-name">405</div>
+        <div class="track-note">Named after Los Angeles's infamous freeway — a song written, quite literally, from the 405. The specificity is very Gracie: place as emotional shorthand, geography as autobiography. A meditative track about transition and the strange clarity that movement sometimes brings.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">16</div>
+      <div>
+        <div class="track-name">Two people <span class="feature-note">(feat. Delacey)</span></div>
+        <div class="track-note">The deluxe edition's most emotionally ambitious track — a collaboration featuring the artist Delacey. A song about the person you are alone versus the person you become in a relationship, and the disorientation when those two versions of yourself stop aligning. A fan-favorite deep cut.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOAH KAHAN FEATURE -->
+  <div class="sub-label">Feature (2023)</div>
+  <div class="album-card">
+    <div class="album-header">
+      <div>
+        <div class="badge badge-mist">Featured Artist</div>
+        <div class="album-title">Noah Kahan — "Everywhere, Everything" (feat. Gracie Abrams)</div>
+        <div class="album-meta">Released: December 1, 2023 · Gracie's first Billboard Hot 100 entry (peaked at #79)</div>
+      </div>
+      <div class="album-year">2023</div>
+    </div>
+    <div class="track">
+      <div class="track-num">—</div>
+      <div>
+        <div class="track-name">Everywhere, Everything <span class="feature-note">(Noah Kahan feat. Gracie Abrams)</span></div>
+        <div class="track-note">Gracie was brought in to add her vocals to the remix of Noah Kahan's beloved track from Stick Season (We'll All Be Here Forever). The pairing made immediate sense — both artists operate in the folk-pop/indie-pop space with confessional, intimate lyrical styles. This remix marked Gracie's first ever entry on the Billboard Hot 100, a milestone year before The Secret of Us would catapult her into the mainstream properly.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THE SECRET OF US -->
+  <div class="sub-label">Second Album</div>
+  <div class="album-card">
+    <div class="album-header-sticky">
+      <span class="sticky-album-title">The Secret of Us</span>
+      <span class="sticky-album-year">2024</span>
+    </div>
+    <div class="album-header">
+      <div>
+        <div class="badge badge-gold">Album · 13 Tracks · Grammy Nominated</div>
+        <div class="album-title">The Secret of Us</div>
+        <div class="album-meta">Released: June 21, 2024 · Produced by Gracie Abrams & Aaron Dessner · Interscope Records<br>#2 Billboard 200 · #1 UK, Australia, Canada, Netherlands, Scotland<br>Grammy nom: Best Pop Duo/Group Performance ("us" feat. Taylor Swift, 67th Grammys)</div>
+      </div>
+      <div class="album-year">2024</div>
+    </div>
+    <div class="track">
+      <div class="track-num">1</div>
+      <div>
+        <div class="track-name">Felt Good About You</div>
+        <div class="track-note">The album's opening track — a bittersweet reflection on a relationship that felt right while it was happening, even if it couldn't last. Gracie opens her sophomore record not with anger or grief, but with a kind of warm, complicated nostalgia. It's the emotional equivalent of picking up an old photo and smiling even though it hurts.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">2</div>
+      <div>
+        <div class="track-name">Risk <span class="feature-note">★ Single · MV</span></div>
+        <div class="track-note">The album's lead single — a slick, confident pop track about the terrifying calculus of deciding whether someone is worth the emotional risk. Co-written with Audrey Hobert; the music video (also directed by Hobert) features Gracie getting wine-drunk and stalking a crush with increasing determination and decreasing dignity. A crowd favorite on tour.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">3</div>
+      <div>
+        <div class="track-name">Blowing Smoke</div>
+        <div class="track-note">A song about someone who talks a big game but consistently fails to follow through. "I cut the rope and you fell from the tower" — Gracie at her most controlled and pointed. The production here is one of the album's most textured moments: layers of sound that accumulate like the empty promises the song is documenting.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">4</div>
+      <div>
+        <div class="track-name">I Love You, I'm Sorry <span class="feature-note">★ Single · MV</span></div>
+        <div class="track-note">Both a sequel to "I miss you, I'm sorry" (2020) and a completely different emotional register: where the original was raw grief, this is wry, self-aware accountability. "I like to slam doors closed / Trust me, I know it's always about me." The "Asshole of the Year" award in the music video is one of her most iconic visual moments. Rolling Stone's 60th best song of 2024. Career-best bridge, per critics.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">5</div>
+      <div>
+        <div class="track-name">us. <span class="feature-note">feat. Taylor Swift ★ Grammy Nominated</span></div>
+        <div class="track-note">The album's most anticipated track and one of the most discussed pop collaborations of 2024. Taylor Swift contributes vocals to this intimate, confessional track about a relationship built on shared secrets — the "secret of us." Performed live for the first time at Wembley Stadium on June 23, 2024 (night three of Eras Tour), with Gracie on piano and Taylor on guitar. Nominated for Best Pop Duo/Group Performance at the 67th Grammys.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">6</div>
+      <div>
+        <div class="track-name">Let It Happen</div>
+        <div class="track-note">A mid-album turning point — a song about choosing not to fight a feeling for once, about letting something unfold without trying to control or anticipate it. Given how much of Gracie's catalog is about analyzing emotions to their cellular level, "let it happen" reads as an intentional, hard-won choice.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">7</div>
+      <div>
+        <div class="track-name">Tough Love</div>
+        <div class="track-note">"I took a train to Boston and I wanted to" — Gracie at her most direct. A song about the particular cruelty of being loved by someone who expresses it through criticism, withdrawal, or impossible standards. The tenderness in her delivery makes the subject matter hit harder by contrast.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">8</div>
+      <div>
+        <div class="track-name">I Knew It, I Know You</div>
+        <div class="track-note">A song built on the disorienting feeling of being proven right about something you hoped you were wrong about. The title's tense-shift — from past to present — mirrors the emotional experience: the sick satisfaction of "I knew it" followed immediately by the grief of "and now I really know."</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">9</div>
+      <div>
+        <div class="track-name">Gave You I Gave You I</div>
+        <div class="track-note">One of the album's most unusual title constructions — and sonically, one of its most interesting. A song about the asymmetry of devotion: giving everything and receiving something significantly less in return. The repetitive title mirrors the exhaustion of the giving.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">10</div>
+      <div>
+        <div class="track-name">Normal Thing</div>
+        <div class="track-note">A song about desperately wanting what you feel to be ordinary — to have it confirmed that this kind of intensity, this kind of pain, is something everyone goes through. The comfort of being told you're not uniquely broken. One of the album's quietest and most emotionally precise tracks.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">11</div>
+      <div>
+        <div class="track-name">Good Luck Charlie</div>
+        <div class="track-note">Named not after the Disney Channel show but after a specific person — a sardonic farewell to someone who treated her badly. The "good luck" is not genuine. "Charlie" is believed by fans to be a deliberate pseudonym. One of the album's more defiant moments and a live crowd-pleaser.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">12</div>
+      <div>
+        <div class="track-name">Free Now</div>
+        <div class="track-note">The final standard-edition track before the closer — a song about the strange, bittersweet feeling of freedom after a relationship ends. Not triumphant freedom. The kind that feels like standing in an empty room and not knowing what to do with all the space.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">13</div>
+      <div>
+        <div class="track-name">Close to You <span class="feature-note">★ Single</span></div>
+        <div class="track-note">The album's official closer and one of its most beloved tracks — originally recorded as a 20-second voice memo snippet seven years before the album's release. Fan response to that snippet was so overwhelming that Gracie revisited and finished it specifically for The Secret of Us. About the specific gravitational pull of someone you can't get out of your orbit.</div>
+      </div>
+    </div>
+
+    <div class="deluxe-banner">✦ <strong>The Secret of Us (Deluxe)</strong> — Released October 18, 2024 · 4 new songs + 3 live recordings</div>
+
+    <div class="track">
+      <div class="track-num">14</div>
+      <div>
+        <div class="track-name">Cool <span class="feature-note">★ Deluxe</span></div>
+        <div class="track-note">The deluxe's most pointed track — a bold, confessional tell-all about a relationship that soured, delivered with increasing intensity that critics described as one of Gracie's most direct performances. Fan theory: widely believed to reference Dylan O'Brien, containing apparent references to other women associated with him including Sadie Sink and Elle Fanning.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">15</div>
+      <div>
+        <div class="track-name">That's So True <span class="feature-note">★ Single · MV · #1 UK/AUS/CAN/IRE/NZ</span></div>
+        <div class="track-note">The song that changed everything. Released as the deluxe's lead single on November 6, 2024, "That's So True" became Gracie's first chart-topper in multiple countries including the UK, Australia, Canada, Ireland, and New Zealand. A sharp, sardonic track about watching an ex move on and finding the whole thing both painful and faintly absurd — her biggest hit by an enormous margin and the song that made her a mainstream household name.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">16</div>
+      <div>
+        <div class="track-name">I Told You Things <span class="feature-note">★ Deluxe</span></div>
+        <div class="track-note">A deeply personal song about the vulnerability of confiding in someone and then watching them become someone who no longer deserves what you shared with them. The intimacy of "I told you things" as a grievance — the betrayal of shared secrets. A fan and critic favorite from the deluxe.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">17</div>
+      <div>
+        <div class="track-name">Packing It Up <span class="feature-note">★ Deluxe</span></div>
+        <div class="track-note">The deluxe edition's emotional resolution — a song about the specific, physical act of leaving: packing up your things, removing your presence from someone's space, making tangible what was previously only emotional. A quiet, bittersweet close to the extended album.</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-num">18–20</div>
+      <div>
+        <div class="track-name">Live recordings: "I Love You, I'm Sorry," "I Knew It, I Know You," "Free Now"</div>
+        <div class="track-note">Three live recordings from the Secret of Us Tour included in the deluxe edition — the first official documentation of what Gracie sounds like on stage, capturing the intimacy of her live performances before the Radio City Music Hall live album captured the full picture.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Selena Gomez Feature -->
+  <div class="sub-label">Feature (2025)</div>
+  <div class="album-card">
+    <div class="album-header">
+      <div>
+        <div class="badge badge-pink">Featured Artist</div>
+        <div class="album-title">Selena Gomez, benny blanco & Gracie Abrams — "Call Me When You Break Up"</div>
+        <div class="album-meta">Released: 2025 · Standalone Single</div>
+      </div>
+      <div class="album-year">2025</div>
+    </div>
+    <div class="track">
+      <div class="track-num">—</div>
+      <div>
+        <div class="track-name">Call Me When You Break Up</div>
+        <div class="track-note">A three-way collaboration reuniting Gracie with producer Benny Blanco (who featured her on "Unlearn" in 2021) while adding Selena Gomez to the mix. The three artists make intuitive creative sense together — all three trade in confessional emotional honesty and have genuine personal relationships with each other. A pop moment that connected Gracie's growing mainstream audience with Selena's massive global fanbase.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAUGHTER FROM HELL teaser -->
+  <div class="sub-label">Third Album (Incoming)</div>
+  <div class="album-card">
+    <div class="album-header">
+      <div>
+        <div class="badge badge-sand">Announced · Lead Single Out May 14, 2026</div>
+        <div class="album-title">Daughter from Hell</div>
+        <div class="album-meta">2026 · Produced by Gracie Abrams & Aaron Dessner · Interscope Records</div>
+      </div>
+      <div class="album-year">2026</div>
+    </div>
+    <div class="track">
+      <div class="track-num">1</div>
+      <div>
+        <div class="track-name">Hit The Wall <span class="feature-note">★ Lead Single — May 14, 2026</span></div>
+        <div class="track-note">The lead single from Gracie's third album, announced alongside an image of her standing in front of a burning flame with the caption "I love it with everything I have." The album title Daughter from Hell represents a bolder, more confrontational energy than her previous work — fans have noted snippets suggesting a faster pace than The Secret of Us. Unreleased songs "Out of Nowhere," "Crazy Girl," "Death Wish," "Cold Goodbyes" and others were debuted live in 2025, signaling a major sonic evolution. She's also working with Bon Iver (Justin Vernon) on at least one track.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════ MUSIC VIDEOS ══════════════════════════════ -->
+<div id="videos" class="section">
+  <div class="section-header">
+    <h2>Music Videos</h2>
+    <p>Every official visual — with notes on directors, concepts, and iconic moments</p>
+  </div>
+
+  <div class="mv-card">
+    <div class="mv-icon">🎬</div>
+    <div>
+      <div class="mv-title">Mean It (2019)</div>
+      <div class="mv-note">Gracie's debut visual — an intimate, stripped-back introduction to her world. Shot with a bedroom-pop aesthetic that perfectly matched the lo-fi emotional register of the song. Established the DIY-meets-polished quality of her visual identity from day one.</div>
+    </div>
+  </div>
+
+  <div class="mv-card">
+    <div class="mv-icon">🎬</div>
+    <div>
+      <div class="mv-title">21 (2020)</div>
+      <div class="mv-note">A minimal, quietly devastating video to match the song — soft visuals that capture the feeling of missing someone's milestone without making it melodramatic. Fan-favorite visual; the lo-fi aesthetic mirrors the song's production.</div>
+    </div>
+  </div>
+
+  <div class="mv-card">
+    <div class="mv-icon">🎬</div>
+    <div>
+      <div class="mv-title">I miss you, I'm sorry (2020)</div>
+      <div class="mv-note">A sparse, emotionally raw visual that puts Gracie front and center. Known for its unpretentious framing — nothing is hidden behind visual spectacle because the song doesn't need it. The video that caught Olivia Rodrigo's attention and inspired "drivers license."</div>
+    </div>
+  </div>
+
+  <div class="mv-card">
+    <div class="mv-icon">🎬</div>
+    <div>
+      <div class="mv-title">Mess It Up (2021)</div>
+      <div class="mv-note">A sun-drenched, intimate visual for the standalone single — captures the nervous, almost giddy energy of the song itself. Soft summer light and candid-feeling footage that makes you feel like you're watching something private.</div>
+    </div>
+  </div>
+
+  <div class="mv-card">
+    <div class="mv-icon">🎬</div>
+    <div>
+      <div class="mv-title">Difficult (2022)</div>
+      <div class="mv-note">The music video that announced the Good Riddance era. A visually more ambitious step up from the EP-era visuals — intimate but with a more cinematic quality. Gracie navigating recognizably real-world spaces as the emotional subject matter unfolds around her.</div>
+    </div>
+  </div>
+
+  <div class="mv-card">
+    <div class="mv-icon">🎬</div>
+    <div>
+      <div class="mv-title">Where Do We Go Now? (2023)</div>
+      <div class="mv-note">A music video that expanded Gracie's visual vocabulary considerably — the Good Riddance album's second visual, released alongside the single in January 2023. More overtly narrative than her earlier videos, with a specific emotional arc built into the visual storytelling.</div>
+    </div>
+  </div>
+
+  <div class="mv-card">
+    <div class="mv-icon">🎬</div>
+    <div>
+      <div class="mv-title">Risk (2024) — directed by Audrey Hobert</div>
+      <div class="mv-note">The Secret of Us era begins. Directed by Gracie's best friend Audrey Hobert in their first official creative collaboration. Depicts Gracie getting wine-drunk and stalking a crush with escalating intensity — funny, charismatic, and more playful than her previous visuals. A new side of Gracie and a new chapter in her visual identity.</div>
+    </div>
+  </div>
+
+  <div class="mv-card">
+    <div class="mv-icon">🎬</div>
+    <div>
+      <div class="mv-title">I Love You, I'm Sorry (2024) — directed by Audrey Hobert</div>
+      <div class="mv-note">Perhaps Gracie's most celebrated music video. Hobert directs again with a confident satirical eye: Gracie riding a bicycle on the beach, drinking with friends, leaning out of a car window — then arriving late to an awards ceremony where she receives the "Asshole of the Year" award, opens it to reveal a microphone, and crowd-surfs. Critics described it as "satirical and cinematic" — showing a playful, self-aware side of Gracie that fans went wild for.</div>
+    </div>
+  </div>
+
+  <div class="mv-card">
+    <div class="mv-icon">🎬</div>
+    <div>
+      <div class="mv-title">That's So True (2024)</div>
+      <div class="mv-note">The visual for her biggest hit — a music video that needed to match a chart-dominating song. Captures the wry, sardonic emotional register of the song: watching an ex thrive while you process very complicated feelings about it. The visual that introduced millions of new fans to Gracie's world via streaming platform discovery.</div>
+    </div>
+  </div>
+
+  <div class="mv-card">
+    <div class="mv-icon">📺</div>
+    <div>
+      <div class="mv-title">I Love You, I'm Sorry — Live from Vevo (2024)</div>
+      <div class="mv-note">A live performance video filmed for Vevo's Extended Play series — officially released as part of the deluxe edition. A fan-beloved documentation of Gracie's live performance intimacy, capturing the song in a stripped-back live setting before the full Radio City Music Hall concert film.</div>
+    </div>
+  </div>
+
+  <div class="mv-card">
+    <div class="mv-icon">📺</div>
+    <div>
+      <div class="mv-title">That's So True — Live from Radio City Music Hall (2024)</div>
+      <div class="mv-note">Released as a single — a live performance document from her landmark Radio City Music Hall shows in October 2024. The Secret of Us Live From Radio City Music Hall full concert was also released in 2025 as an official live album, capturing one of the definitive performances of her career.</div>
+    </div>
+  </div>
+
+  <div class="mv-card">
+    <div class="mv-icon">🎬</div>
+    <div>
+      <div class="mv-title">Apple Music Live: Gracie Abrams (2025)</div>
+      <div class="mv-note">A full live concert film produced by Apple Music — 17 songs, including fan favorites across her entire catalog. Premiering in October 2025, this was another official visual document of her live show at a major career peak. Preceded by a deep Zane Lowe interview available on Apple Music.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ TOURS ══════════════════════════════ -->
+<div id="tours" class="section">
+  <div class="section-header">
+    <h2>Tours & Live History</h2>
+    <p>Every headlining tour, opening slot, festival set, and notable live moment</p>
+  </div>
+
+  <!-- I've Missed You I'm Sorry Tour -->
+  <div class="sub-label">Tour I — Headlining</div>
+  <div class="tour-block">
+    <div class="tour-header-sticky">
+      <span class="sticky-tour-title">I've Missed You, I'm Sorry Tour</span>
+    </div>
+    <div class="tour-header">
+      <div>
+        <div class="badge badge-sky">Headlining · 12 Dates</div>
+        <div class="tour-name">I've Missed You, I'm Sorry Tour</div>
+        <div class="tour-meta">Supporting minor EP · North America & UK · Sept 1 – Oct 21, 2021</div>
+      </div>
+      <div class="tour-year">2021</div>
+    </div>
+    <div class="tour-date">
+      <div class="td-date">Sep 1, 2021</div>
+      <div>
+        <div class="td-venue">Observatory North Park — Santa Ana, CA</div>
+        <div class="td-note">Tour opener. First in-person headline show after COVID-19 canceled the original Minor tour plans.</div>
+      </div>
+    </div>
+    <div class="tour-date">
+      <div class="td-date">Sep – Oct 2021</div>
+      <div>
+        <div class="td-venue">Multiple US cities + London, UK</div>
+        <div class="td-note">12 selective dates covering North America and the UK, with a London finale on October 21, 2021. Originally scheduled as the Minor tour in 2021; pandemic restrictions had pushed it back over a year.</div>
+      </div>
+    </div>
+    <div class="tour-date">
+      <div class="td-date">Oct 21, 2021</div>
+      <div>
+        <div class="td-venue">London, England</div>
+        <div class="td-note">Tour finale. Also supported the standalone singles "Mess It Up" and "Unlearn" (with Benny Blanco) during this period.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Opening: Olivia Rodrigo Sour Tour -->
+  <div class="sub-label">Opening Act — Olivia Rodrigo</div>
+  <div class="tour-block">
+    <div class="tour-header">
+      <div>
+        <div class="badge badge-pink">Opening Act</div>
+        <div class="tour-name">Olivia Rodrigo — SOUR Tour</div>
+        <div class="tour-meta">Feb 2022 – May 2022 · North America & Europe</div>
+      </div>
+      <div class="tour-year">2022</div>
+    </div>
+    <div class="tour-date">
+      <div class="td-date">Feb – May 2022</div>
+      <div>
+        <div class="td-venue">Supporting Olivia Rodrigo — SOUR Tour</div>
+        <div class="td-note">Gracie's first major opening slot — announced in December 2021, this was the tour that introduced her to arenas. Olivia Rodrigo had cited "I miss you, I'm sorry" as a direct inspiration for "drivers license," so the partnership was deeply meaningful. Gracie performed for massive crowds across North America and Europe, performing alongside her This Is What It Feels Like headlining run simultaneously. The experience of playing to arena-sized audiences for the first time was cited in later interviews as transformative.</div>
+        <div><span class="td-special">✦ Connection: Olivia has credited Gracie's minor EP as the inspiration for "drivers license"</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- This Is What It Feels Like Tour -->
+  <div class="sub-label">Tour II — Headlining</div>
+  <div class="tour-block">
+    <div class="tour-header-sticky">
+      <span class="sticky-tour-title">This Is What It Feels Like Tour</span>
+    </div>
+    <div class="tour-header">
+      <div>
+        <div class="badge badge-sky">Headlining</div>
+        <div class="tour-name">This Is What It Feels Like Tour</div>
+        <div class="tour-meta">Feb 2 – May 31, 2022 · North America & Europe</div>
+      </div>
+      <div class="tour-year">2022</div>
+    </div>
+    <div class="tour-date">
+      <div class="td-date">Feb 2, 2022</div>
+      <div>
+        <div class="td-venue">Tour opener — Salt Lake City, UT</div>
+        <div class="td-note">First headlining tour in support of the This Is What It Feels Like EP. Ran simultaneously with her opening slot on the Sour Tour — a remarkable logistical and artistic feat for a developing artist.</div>
+      </div>
+    </div>
+    <div class="tour-date">
+      <div class="td-date">May 31, 2022</div>
+      <div>
+        <div class="td-venue">Tour finale — Stockholm, Sweden</div>
+        <div class="td-note">European finale of the tour. By this point Gracie had played to tens of thousands of new fans through the combined Sour Tour and her own headline run — and was already working on Good Riddance.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Taylor Swift Eras Tour (Opening) -->
+  <div class="sub-label">Opening Act — Taylor Swift</div>
+  <div class="tour-block">
+    <div class="tour-header">
+      <div>
+        <div class="badge badge-gold">Opening Act · Multiple legs</div>
+        <div class="tour-name">Taylor Swift — The Eras Tour</div>
+        <div class="tour-meta">April–August 2023 (US Leg 1) · October–December 2024 (US + Canadian legs)</div>
+      </div>
+      <div class="tour-year">2023–24</div>
+    </div>
+    <div class="tour-date">
+      <div class="td-date">Apr–Aug 2023</div>
+      <div>
+        <div class="td-venue">US Leg — Selected dates (approx. 30 of 52 US shows)</div>
+        <div class="td-note">Gracie opened for Taylor Swift on select dates of the first North American leg — exposing her to stadium crowds of 60,000+ nightly. A defining career moment. During this run Gracie released Good Riddance and was in the midst of her Good Riddance Tour simultaneously.</div>
+        <div><span class="td-special">✦ Taylor personally chose Gracie as an opener — a significant artistic endorsement</span></div>
+      </div>
+    </div>
+    <div class="tour-date">
+      <div class="td-date">Oct–Dec 2024</div>
+      <div>
+        <div class="td-venue">US + Canadian Leg — Multiple dates</div>
+        <div class="td-note">Returned as Swift's opening act for the final US and Canadian legs. Performed at the second-to-last show of the entire Eras Tour in Vancouver. On November 16, 2024, Gracie joined Taylor onstage for a mashup of "I Love You, I'm Sorry" and "Out of the Woods." At the final two December shows, they performed a mashup of "I Love You, I'm Sorry" and "Last Kiss."</div>
+        <div><span class="td-special">✦ Notable: Performed "us." live for the first time with Taylor at Wembley, June 23, 2024</span></div>
+        <div><span class="td-special">✦ SNL debut December 14, 2024 — performed "I Love You, I'm Sorry" & "That's So True"</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Good Riddance Tour -->
+  <div class="sub-label">Tour III — Headlining</div>
+  <div class="tour-block">
+    <div class="tour-header-sticky">
+      <span class="sticky-tour-title">Good Riddance Tour</span>
+    </div>
+    <div class="tour-header">
+      <div>
+        <div class="badge badge-sky">Headlining · Sold out under 1 hour</div>
+        <div class="tour-name">Good Riddance Tour</div>
+        <div class="tour-meta">2023–2024 · North America + Australia · Opening act: Tiny Habits</div>
+      </div>
+      <div class="tour-year">2023</div>
+    </div>
+    <div class="tour-date">
+      <div class="td-date">Feb 2023</div>
+      <div>
+        <div class="td-venue">North American leg announced with album</div>
+        <div class="td-note">All dates sold out in under one hour of going on sale — a remarkable milestone for Gracie at this stage of her career. Tiny Habits served as opening act for the North American dates.</div>
+      </div>
+    </div>
+    <div class="tour-date">
+      <div class="td-date">2023</div>
+      <div>
+        <div class="td-venue">North American tour dates</div>
+        <div class="td-note">A full North American run in intimate theater venues — the scale perfectly matched Good Riddance's quiet, confessional energy. Fans attended in large numbers and the shows developed a reputation for a particular intimacy between Gracie and her audience.</div>
+      </div>
+    </div>
+    <div class="tour-date">
+      <div class="td-date">Jan 15 – 2024</div>
+      <div>
+        <div class="td-venue">Australian Leg</div>
+        <div class="td-note">Australian tour dates added in August 2023, beginning January 15, 2024. A significant sign of Gracie's growing international profile — Australia would later become one of her strongest markets when "That's So True" hit #1 there.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Secret of Us Tour -->
+  <div class="sub-label">Tour IV — Headlining</div>
+  <div class="tour-block">
+    <div class="tour-header-sticky">
+      <span class="sticky-tour-title">The Secret of Us Tour</span>
+    </div>
+    <div class="tour-header">
+      <div>
+        <div class="badge badge-gold">Headlining · 81+ shows · 4 Continents</div>
+        <div class="tour-name">The Secret of Us Tour</div>
+        <div class="tour-meta">Sept 5, 2024 – Aug 27, 2025 · North America, Europe, Asia, Oceania<br>Opening acts: Role Model, Ashe, Dora Jar</div>
+      </div>
+      <div class="tour-year">2024–25</div>
+    </div>
+    <div class="tour-date">
+      <div class="td-date">Sep 5, 2024</div>
+      <div>
+        <div class="td-venue">Tour opener — Portland, OR</div>
+        <div class="td-note">Tour begins with Role Model as opening act for all North American dates. Gracie steps up to larger venues as "That's So True" is weeks away from becoming a worldwide #1.</div>
+      </div>
+    </div>
+    <div class="tour-date">
+      <div class="td-date">Sep–Oct 2024</div>
+      <div>
+        <div class="td-venue">North American Leg I — 23 shows</div>
+        <div class="td-note">High demand prompted additional shows in New York, Los Angeles, and Denver. The NYC shows at Radio City Music Hall (October 7) became the site of the live album recording.</div>
+        <div><span class="td-special">✦ Radio City Music Hall shows filmed for live album — Oct 7, 2024</span></div>
+      </div>
+    </div>
+    <div class="tour-date">
+      <div class="td-date">Oct 30, 2024</div>
+      <div>
+        <div class="td-venue">Harris Campaign Rally — Madison, WI</div>
+        <div class="td-note">Gracie performed "I Love You, I'm Sorry" and "Free Now" at a Kamala Harris presidential campaign rally — a public political statement about her values and platform.</div>
+        <div><span class="td-special">✦ Notable: Political performance — Harris rally</span></div>
+      </div>
+    </div>
+    <div class="tour-date">
+      <div class="td-date">Jan 30, 2025</div>
+      <div>
+        <div class="td-venue">FireAid Benefit Concert — Intuit Dome, Inglewood, CA</div>
+        <div class="td-note">Performed at the benefit concert organized to raise funds for victims of the January 2025 Southern California wildfires — personally meaningful given she was raised in Pacific Palisades, one of the most affected areas.</div>
+        <div><span class="td-special">✦ Notable: Personal connection — hometown affected by LA wildfires</span></div>
+      </div>
+    </div>
+    <div class="tour-date">
+      <div class="td-date">Feb 8, 2025</div>
+      <div>
+        <div class="td-venue">European Leg opener — Madrid, Spain</div>
+        <div class="td-note">18-date European run beginning in Madrid, visiting Amsterdam, Berlin, Zurich, Paris, London, Dublin. Gracie debuted the unreleased song "Cold Goodbyes" live in Milan on February 25 as a surprise song — sparking major GA3 album speculation.</div>
+        <div><span class="td-special">✦ Notable: "Cold Goodbyes" debut — first GA3 hint</span></div>
+      </div>
+    </div>
+    <div class="tour-date">
+      <div class="td-date">Mar 6, 2025</div>
+      <div>
+        <div class="td-venue">The O2 Arena — Manchester, UK</div>
+        <div class="td-note">Debuted "Death Wish" live as a surprise song. The live recording from this performance was officially released on April 1, 2025. Further cementing that a new album era was beginning.</div>
+        <div><span class="td-special">✦ Notable: "Death Wish" world premiere</span></div>
+      </div>
+    </div>
+    <div class="tour-date">
+      <div class="td-date">Mar 12, 2025</div>
+      <div>
+        <div class="td-venue">European Leg finale — Glasgow, Scotland</div>
+        <div class="td-note">End of the European run. Glasgow was a particularly special market — Scotland was one of the first countries where "That's So True" topped the charts.</div>
+      </div>
+    </div>
+    <div class="tour-date">
+      <div class="td-date">Jun 2025</div>
+      <div>
+        <div class="td-venue">Glastonbury Festival 2025 — Glastonbury, UK</div>
+        <div class="td-note">A headlining-adjacent festival slot at one of the world's most prestigious music festivals. Gracie debuted another unreleased song, "Out of Nowhere," during her set — suspected to be about Paul Mescal, who was spotted in the crowd dancing on Gracie's shoulders. A career-defining moment.</div>
+        <div><span class="td-special">✦ Notable: Paul Mescal in attendance · "Out of Nowhere" debut</span></div>
+      </div>
+    </div>
+    <div class="tour-date">
+      <div class="td-date">Jul 4, 2025</div>
+      <div>
+        <div class="td-venue">BST Hyde Park — London, UK</div>
+        <div class="td-note">Debuted "Crazy Girl" (the song previously known to fans as "Know You") live at the BST Hyde Park festival. Another major UK outdoor festival moment in what was becoming a landmark UK summer for Gracie.</div>
+        <div><span class="td-special">✦ Notable: "Crazy Girl" world premiere</span></div>
+      </div>
+    </div>
+    <div class="tour-date">
+      <div class="td-date">Jul 23 – Aug 27, 2025</div>
+      <div>
+        <div class="td-venue">The Secret of Us Deluxe Tour — North America</div>
+        <div class="td-note">A second North American leg, rebadged as "The Secret of Us Deluxe Tour" — kicking off at TD Garden in Boston. Role Model returned as support for all dates. VIP experiences included a Polaroid photo op with Gracie, scrapbook station, and custom cocktails. Final date: Mexico City, August 27, 2025.</div>
+        <div><span class="td-special">✦ Opening act: Role Model on all Deluxe Tour dates</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════ CONNECTIONS ══════════════════════════════ -->
+<div id="connections" class="section">
+  <div class="section-header">
+    <h2>Connections & Relationships</h2>
+    <p>The creative family, industry orbit, and friendships that shaped Gracie's world</p>
+  </div>
+
+  <div class="sub-label">Her Ride or Die — Audrey Hobert</div>
+  <div class="card">
+    <div class="person-card" style="border-bottom:none">
+      <div class="avatar" style="background:rgba(200,223,245,0.3);color:var(--sky4)">AH</div>
+      <div>
+        <h4>Audrey Hobert — best friend, co-writer, music video director</h4>
+        <p>Gracie's closest creative partner and best friend — and arguably the most important person in the Secret of Us era. Hobert (whose brother is musician Malcolm Todd) and Gracie have been friends since middle school, where they spent their afternoons making Video Star movies together. Hobert made her official songwriting debut co-writing seven tracks on The Secret of Us, including "Risk," "I Love You, I'm Sorry," and "That's So True" — making her one of the most consequential new co-writers in pop. She also directed the music videos for "Risk" and "I Love You, I'm Sorry," bringing a genuinely intimate, playful visual language to Gracie's work. When Gracie talks about the people she trusts most in the world, Hobert is always near the top of the list. Their friendship gives The Secret of Us its particular warmth — you can feel a real human relationship behind the songs.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-label">Creative Collaborators</div>
+  <div class="card">
+    <div class="person-card">
+      <div class="avatar" style="background:rgba(201,168,76,0.12);color:#9a7430">AD</div>
+      <div>
+        <h4>Aaron Dessner — producer, creative anchor</h4>
+        <p>The National guitarist and multi-platinum producer who has shaped every major Gracie release from This Is What It Feels Like (2021) onward. Their working relationship mirrors in some ways Dessner's collaboration with Taylor Swift: mutual trust built slowly, starting with a single track ("Rockland") and deepening into a full creative partnership. Dessner produces from his Long Pond Studio in the Hudson Valley — where all of Good Riddance and much of The Secret of Us were recorded across 25+ non-consecutive studio days. He's producing the third album as well. Gracie has said she considers him a genuine friend, not just a collaborator.</p>
+      </div>
+    </div>
+    <div class="person-card">
+      <div class="avatar" style="background:rgba(160,210,180,0.2);color:#3a7055">BS</div>
+      <div>
+        <h4>Blake Slatkin — ex-boyfriend, debut producer</h4>
+        <p>Gracie's first serious relationship — they dated from 2017 to 2022. Slatkin, a songwriter and producer who has worked with The Kid LAROI, Lil Nas X, and Justin Bieber, was also Gracie's executive producer on her debut EP Minor. This meant the songs about their relationship were produced by the person the songs were about — which gives the Minor EP an unusual, recursive emotional texture. Their split in 2022 clearly influenced much of Good Riddance, which Gracie has directly described as an album about processing a breakup and becoming accountable as a partner.</p>
+      </div>
+    </div>
+    <div class="person-card" style="border-bottom:none">
+      <div class="avatar" style="background:rgba(200,223,245,0.25);color:var(--sky4)">JV</div>
+      <div>
+        <h4>Justin Vernon (Bon Iver) — new collaborator, GA3</h4>
+        <p>For the third album, Gracie has added Justin Vernon of Bon Iver to her creative circle — collaborating on at least one track ("Sold Out") alongside Aaron Dessner. Vernon and Dessner have a long history together (Big Red Machine), so the addition makes creative sense — but it also signals a sonic evolution toward something more atmospheric and ambitious on the new record.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-label">The Taylor Swift Chapter</div>
+  <div class="card">
+    <p>Gracie has called Taylor Swift one of her most important artistic influences — specifically citing Taylor's pacing ("I am inspired by Taylor in a million ways, but especially by the pace with which she puts things out into the world") and Taylor Swift school of confessional songwriting. The two were brought together through their shared producer Aaron Dessner, who has worked extensively with both artists. Taylor personally selected Gracie as an opener for the Eras Tour in 2023 and 2024 — a major endorsement. Their collaboration on "us." (The Secret of Us) resulted in a Grammy nomination for Best Pop Duo/Group Performance. Live, they've performed mashups of each other's songs during Eras Tour shows. Gracie describes herself as a "Tay-daughter" — and it's clear the influence goes beyond music into work ethic and artistic philosophy. Taylor also contributed songwriting credits to "us." making it a genuine co-creation rather than a mere feature.</p>
+  </div>
+
+  <div class="sub-label">Fellow Artists & Orbit</div>
+  <div class="conn-grid">
+    <div class="conn-card">
+      <h4>Olivia Rodrigo</h4>
+      <p>Olivia has cited Gracie's minor EP — specifically "I miss you, I'm sorry" — as the direct inspiration for writing "drivers license." When Olivia's label suggested they meet, Olivia said "I literally don't think I can meet her. I think I would just evaporate. I'm her biggest fan." They later toured together when Gracie opened the SOUR Tour in 2022. A full-circle relationship: fan becomes collaborator becomes friend.</p>
+    </div>
+    <div class="conn-card">
+      <h4>Role Model</h4>
+      <p>Tucker Pillsbury (Role Model) served as Gracie's opening act on the North American leg of the Secret of Us Tour and the Secret of Us Deluxe Tour — returning as support for all 2025 Deluxe dates. Both artists operate in a similar indie-pop/bedroom-pop space and share an audience of emotionally vulnerable twentysomethings.</p>
+    </div>
+    <div class="conn-card">
+      <h4>Noah Kahan</h4>
+      <p>Gracie featured on the remix of Kahan's "Everywhere, Everything" in December 2023 — her first Billboard Hot 100 entry. The pairing made immediate creative sense: both are confessional singer-songwriters with folk-pop roots and audiences who treat their music as emotional autobiography.</p>
+    </div>
+    <div class="conn-card">
+      <h4>Benny Blanco</h4>
+      <p>Featured Gracie on "Unlearn" in 2021 — her first major industry co-sign from a super-producer. Later reunited for the 2025 "Call Me When You Break Up" single with Selena Gomez, showing the collaborative relationship has endured and grown as Gracie's profile expanded.</p>
+    </div>
+    <div class="conn-card">
+      <h4>Lorde</h4>
+      <p>Was one of Gracie's earliest celebrity champions — when Gracie uploaded a version of the "minor" title track in 2019, Lorde DM'd her to "send me the MP3." Lorde's influence (confessional but elevated, emotional but cool) is audible in Gracie's early work, and the endorsement from someone of Lorde's status gave Gracie a credibility signal very early in her career.</p>
+    </div>
+    <div class="conn-card">
+      <h4>Sabrina Carpenter</h4>
+      <p>Fans have speculated "That's So True" describes the experience of watching Dylan O'Brien (Gracie's rumored 2022 fling) move on to Sabrina Carpenter. Both Gracie and Sabrina are in Taylor Swift's inner circle, which has led to a publicly warm relationship between them despite the rumored Dylan triangle. A shared Taylor Swift connection has smoothed what could have been an awkward situation.</p>
+    </div>
+    <div class="conn-card">
+      <h4>Selena Gomez</h4>
+      <p>Collaborated on "Call Me When You Break Up" (2025) with Benny Blanco — their shared aesthetic (confessional pop, emotional honesty, Benny Blanco as connector) made the collaboration feel organic. Both are connected through the LA entertainment world, and their mutual admiration appears genuine.</p>
+    </div>
+    <div class="conn-card">
+      <h4>Jack Antonoff</h4>
+      <p>Contributed to The Secret of Us's production in a supporting role alongside Gracie and Dessner — another connection to the Taylor Swift extended musical family. Antonoff, one of the most important producers in contemporary pop, represents yet another prestigious endorsement of Gracie's creative world.</p>
+    </div>
+  </div>
+
+  <div class="sub-label">Famous Family</div>
+  <div class="card">
+    <div class="person-card" style="border-bottom:none">
+      <div class="avatar" style="background:rgba(201,168,76,0.15);color:#9a7430">JJA</div>
+      <div>
+        <h4>J.J. Abrams — father, filmmaker</h4>
+        <p>Gracie is the daughter of J.J. Abrams — the director behind Star Wars: The Force Awakens, Mission: Impossible III, the Star Trek reboot, and the creator of Lost and Alias. Her grandfather Gerald W. Abrams and grandmother Carol Ann Abrams are television producers. Growing up in one of Hollywood's most creative families gave Gracie an unusual fluency with the entertainment industry from childhood — but she's been deliberate about building her own identity. She describes rarely talking to her dad about music ("he loves it but that's not really our relationship"), and Apple Music's liner notes explicitly compare her "incisions" to the "ingeniously convoluted plotlines" of her father's TV work, noting the irony that she cuts straight while he elaborates. She attended The Archer School for Girls, enrolled at Barnard College to study international relations, and left after one year to pursue music full-time.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-label">Actor Connections</div>
+  <div class="conn-grid">
+    <div class="conn-card">
+      <h4>Paul Mescal — boyfriend (2024–present)</h4>
+      <p>Irish actor (Normal People, Aftersun, Gladiator II, Hamnet) and Gracie's current partner. Their relationship went public with Glastonbury 2025 photos and was officially confirmed at the 2025 BAFTAs. Gracie publicly praised Hamnet on Instagram and celebrated Mescal's 30th birthday with PDA-filled photos. They attended the 2026 Oscars together in matching black.</p>
+    </div>
+    <div class="conn-card">
+      <h4>Dylan O'Brien — rumored (2022)</h4>
+      <p>Teen Wolf actor. Rumored brief relationship in early-mid 2022, first reported by Deuxmoi. Never confirmed by either party. Fan theory holds that "That's So True," "Cool," and possibly other Secret of Us tracks reference this period and O'Brien's subsequent dating life (including a rumored brief connection with Sabrina Carpenter).</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ THEORIES ══════════════════════════════ -->
+<div id="theories" class="section">
+  <div class="section-header">
+    <h2>Fan Theories & Song Meanings</h2>
+    <p>Who the songs are about, what the lyrics really mean, and the detective work fans have done</p>
+  </div>
+
+  <div class="sub-label">The Blake Slatkin Era (minor & Good Riddance)</div>
+
+  <div class="theory">
+    <h4>"I miss you, I'm sorry," "Long Sleeves," "21" — The Blake Slatkin Songs</h4>
+    <p>Blake Slatkin, Gracie's boyfriend from approximately 2017–2022 and the producer of her debut EP, is widely believed to be the subject of the minor EP's emotional core. The timeline aligns: Gracie wrote minor "in response to a very transitional year" and "her first breakup" — which would be her relationship with Slatkin. The songs are careful not to name him, but the specificity of "I miss fighting in your old apartment / Breaking dishes when you're disappointed" (I miss you, I'm sorry) feels acutely autobiographical. Gracie has never confirmed or denied, which is part of her artistic approach — the songs are hers, not reportage.</p>
+  </div>
+
+  <div class="theory">
+    <h4>"Best," "I know it won't work," "The blue," "Fault line" — Good Riddance as breakup document</h4>
+    <p>Good Riddance was explicitly described by Gracie as an album written about a breakup, friendships, and family — and the breakup in question is almost certainly her 2022 split from Slatkin. Songs like "Best" ("You're the worst of my crimes / You fell hard / I thought good riddance") and "I should hate you" trace the emotional arc of ending a long relationship that was also a creative partnership. The unusual intimacy of "the blue" ("You live in Hollywood, you're half an hour from me") suggests a specific geography — LA, where both Gracie and Slatkin are based. "Will you cry?" asks whether an ex will mourn you — a very human, vulnerable question that fans read as addressed to Slatkin specifically.</p>
+  </div>
+
+  <div class="theory">
+    <h4>"Amelie" — The Mystery Woman</h4>
+    <p>One of the most intriguing mysteries in Gracie's catalog: "I met a girl once / She sort of ripped me open." Fans have long tried to identify who "Amelie" is. Gracie has been characteristically silent about this one — it's clearly a specific person who made a significant emotional impact, but whether it's a romantic connection, a friendship that ended painfully, or something else entirely remains unknown. The name "Amelie" may be a pseudonym. This is one of the songs fans most want answered.</p>
+  </div>
+
+  <div class="theory">
+    <h4>"That's So True" — The Dylan O'Brien Theory</h4>
+    <p>The most heavily theorized song in Gracie's catalog. "That's So True" describes watching an ex move on to someone new, with lyrics about "looking into big blue eyes" — which fits descriptions of Sabrina Carpenter. Dylan O'Brien (blue eyes, Teen Wolf actor) was reportedly seen with Gracie in April 2022; months later, he was linked to Sabrina Carpenter; subsequently, O'Brien had a new girlfriend (Rachel Lange). Fan theory: Gracie wrote "That's So True" about watching O'Brien's romantic orbit post-their rumored connection, with the "big blue eyes" line as a direct reference to his appearance or to the women he moved on to. Gracie has neither confirmed nor denied. Neither has O'Brien. Notably, Sabrina Carpenter is believed to have written "Opposite" about O'Brien around the same time — creating an unlikely fan-analyzed love triangle.</p>
+  </div>
+
+  <div class="theory">
+    <h4>"Cool" — The Name-Drop Song</h4>
+    <p>The Secret of Us Deluxe track that fans dissect most forensically. Lyrics appear to reference specific women by association — fan analysis suggests references to Sadie Sink, Elle Fanning, and others connected to Dylan O'Brien's dating history. The song is a "tell-all" about a partner who treated Gracie badly, delivered with increasing vocal intensity. If the Dylan O'Brien reading is correct, "Cool" is the more explicitly pointed companion to "That's So True" — less about the emotional experience of watching someone move on and more about documenting why the relationship ended.</p>
+  </div>
+
+  <div class="theory">
+    <h4>"us." feat. Taylor Swift — The Friendship Song</h4>
+    <p>Notably, "us." is one of Gracie's most collaborative songs lyrically — and it reads differently from her solo work. The "secret of us" is widely interpreted by fans as the intimacy of a specific relationship, but which one? Some fans read it as about Taylor and Gracie's own friendship — the inside-knowledge intimacy of their creative relationship. Others read it as a romantic relationship that both artists are speaking from. Gracie has said the collaboration emerged naturally from sessions where Taylor was present, making it a genuine co-creation rather than a feature request.</p>
+  </div>
+
+  <div class="theory">
+    <h4>"I Love You, I'm Sorry" — Accountability to Blake?</h4>
+    <p>As a sequel to "I miss you, I'm sorry" — the signature Blake-era song — "I Love You, I'm Sorry" represents a different emotional register. Where the original was about longing and grief, this one is about self-aware accountability: "I like to slam doors closed / Trust me, I know it's always about me." Many fans read this as Gracie's mature reckoning with her own role in the relationship's end — the same breakup seen from a different angle and with a few more years of reflection. The line "You were the best but you were the worst / As sick as it sounds, I loved you first" reads as deeply personal.</p>
+  </div>
+
+  <div class="theory">
+    <h4>"Out of Nowhere" (unreleased) — About Paul Mescal?</h4>
+    <p>Gracie debuted this unreleased song at Glastonbury 2025 — where Paul Mescal was visibly in the crowd dancing on her shoulders. Fans immediately theorized that "Out of Nowhere" is about the unexpected way Mescal entered her life — the title fitting the narrative of meeting someone through an unlikely circumstance (both being in London in summer 2024, crossing paths in the cultural orbit of Taylor Swift's Eras Tour). This is the most speculated-about unreleased song heading into the third album era.</p>
+  </div>
+
+  <div class="theory">
+    <h4>"Close to You" — The Seven-Year Song</h4>
+    <p>This one has a documented origin: Gracie originally recorded a 20-second snippet of "Close to You" seven years before the album's release. Fan response to that snippet was so intense and sustained over the years that she finished the song specifically because of them. Who was it originally about? The timeline suggests it was written around 2017 — possibly about the early stages of her relationship with Blake Slatkin, or possibly about someone else entirely from her late teens. Gracie revisiting it years later gave the song an additional layer of meaning: a song about gravitational pull returning to its singer long after she thought it was done.</p>
+  </div>
+
+  <div class="theory">
+    <h4>"Good Luck Charlie" — Who is Charlie?</h4>
+    <p>Gracie has been explicit that "Charlie" is a real person — and that "good luck" is not sincere. Fans have speculated extensively but no consensus candidate has emerged. The name appears to be a pseudonym (Gracie is careful about real names, as with "Amelie"). The song's sardonic energy is slightly different from the rest of The Secret of Us — less reflective, more cleanly dismissive. Fan theories include both romantic interests and industry figures who treated her dismissively. The Disney Channel show connection has been explicitly ruled out.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ DATING HISTORY ══════════════════════════════ -->
+<div id="dating" class="section">
+  <div class="section-header">
+    <h2>Dating History</h2>
+    <p>Gracie's romantic timeline — and how it maps onto her music</p>
+  </div>
+
+  <div class="dating-card">
+    <span class="period">2017 – 2022 · Long-term relationship</span>
+    <h4>Blake Slatkin — Songwriter & Producer</h4>
+    <p>Gracie's most significant documented relationship — they were together for approximately five years, from around 2017 through 2022. Slatkin is a successful songwriter and producer who has worked with The Kid LAROI, Lil Nas X, and Justin Bieber. The relationship was also a creative partnership: he executive produced and co-wrote much of the Minor EP. This makes Gracie's art unusually complex — the songs about him were made with him. Their split in 2022 was confirmed by Gracie's Wikipedia page and through various interviews where she alluded to processing a breakup. Good Riddance (2023) is widely understood as the artistic processing of this relationship's end. Songs believed to be about Slatkin: "I miss you, I'm sorry," "21," "Long Sleeves," "Best," "I know it won't work," "Will you cry?," "The blue," "Fault line," and "I Love You, I'm Sorry."</p>
+  </div>
+
+  <div class="dating-card">
+    <span class="period">Early 2022 · Rumored brief connection</span>
+    <h4>Hayes Bradley — DJ</h4>
+    <p>Gracie was speculated to be dating DJ Hayes Bradley following a New Year's Eve 2022 Instagram post showing the two together. Neither confirmed the relationship. The nature and duration of any connection is unclear — this appears to have been brief or never escalated to something formal.</p>
+  </div>
+
+  <div class="dating-card">
+    <span class="period">April 2022 · Rumored</span>
+    <h4>Dylan O'Brien — Actor</h4>
+    <p>The most fan-theorized relationship in Gracie's history — and the one that has most visibly influenced her music. First reported by celebrity gossip account Deuxmoi; they were allegedly seen together in April 2022. Neither party has publicly confirmed this relationship. However, fans have drawn extensive connections between this rumored connection and multiple songs on The Secret of Us — particularly "That's So True" (about watching an ex move on), "Cool" (a more pointed tell-all), and potentially others. The theory holds that after their brief connection, O'Brien was linked to Sabrina Carpenter (who is believed to have written "Opposite" about him), and then to his current girlfriend Rachel Lange — and that Gracie processed all of this through the songs on her second album. Unconfirmed; both Gracie and O'Brien have maintained silence.</p>
+  </div>
+
+  <div class="dating-card">
+    <span class="period">June 2024 – Present · Official relationship</span>
+    <h4>Paul Mescal — Actor ❤️ Current</h4>
+    <p>Gracie's current partner and — by all public evidence — the relationship that has made her happiest. Irish actor Paul Mescal (Normal People, Aftersun, Gladiator II, Hamnet) and Gracie were first spotted together at BRAT Restaurant in London in June 2024, when Mescal reached over during dinner to stroke her cheek. Gracie appeared to confirm the relationship via Instagram in July 2024 — posting a Glastonbury photo with Mescal alongside the caption effectively confirming things. They made their official red carpet debut at the 2025 BAFTAs in London, cuddling in photos that went viral. They twinned in all-black at the 2026 Oscars. Gracie publicly called Mescal her love in January 2026, praising his performance in Hamnet with "I love him, surprise." Mescal (born February 2, 1996 — a Aquarius; Gracie is a Virgo) turned 30 in February 2026, with Gracie sharing a series of birthday photos. Fans have theorized that the unreleased song "Out of Nowhere" (debuted at Glastonbury 2025 with Mescal in the crowd) is about their relationship's unexpected beginning. They are currently one of the most popular celebrity couples in pop culture — art world (Gracie) meets film world (Mescal), united by a shared love of storytelling and emotional honesty.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ FUN FACTS ══════════════════════════════ -->
+<div id="facts" class="section">
+  <div class="section-header">
+    <h2>Fun Facts & Trivia</h2>
+    <p>The deep cuts of Gracie lore that fans live for</p>
+  </div>
+
+  <div class="card" style="padding:0.5rem 1.2rem">
+    <div class="fact-item">
+      <span class="fact-icon">👶</span>
+      <p class="fact-text"><strong>She wrote her first song at age eight.</strong> By 17, she'd written "minor" — and immediately knew it was the first song that was entirely, unmistakably her. The song she almost gave up trying to write at 14 became the title of her debut EP.</p>
+    </div>
+    <div class="fact-item">
+      <span class="fact-icon">🎓</span>
+      <p class="fact-text"><strong>She quit Barnard College after one year to pursue music.</strong> Enrolled to study international relations at the prestigious New York City college, left after her first year. Her father J.J. Abrams has spoken proudly of her decision — despite the family's Hollywood roots, she built her career entirely on her own terms.</p>
+    </div>
+    <div class="fact-item">
+      <span class="fact-icon">👑</span>
+      <p class="fact-text"><strong>Lorde DM'd her before she had a record deal.</strong> After Gracie posted "minor" on YouTube in 2019, Lorde direct-messaged her asking for the MP3. Being championed by one of the most critically acclaimed artists of her generation before signing to Interscope is one of Gracie's most remarkable early career moments.</p>
+    </div>
+    <div class="fact-item">
+      <span class="fact-icon">🎵</span>
+      <p class="fact-text"><strong>She directly inspired Olivia Rodrigo's "drivers license."</strong> Olivia has said "I miss you, I'm sorry" was the direct inspiration for her career-launching debut single. When Olivia's label suggested they meet, Rodrigo said "I literally don't think I can meet her. I think I would just evaporate. I'm her biggest fan."</p>
+    </div>
+    <div class="fact-item">
+      <span class="fact-icon">🏆</span>
+      <p class="fact-text"><strong>"That's So True" hit #1 in five countries simultaneously.</strong> The UK, Australia, Canada, Ireland, and New Zealand all topped their charts at the same time — making it Gracie's commercial breakthrough and one of the most unexpected pop hits of late 2024. It peaked at #4 on the Billboard Global 200 and #6 on the US Hot 100.</p>
+    </div>
+    <div class="fact-item">
+      <span class="fact-icon">🎹</span>
+      <p class="fact-text"><strong>"Close to You" existed as a 20-second voice memo for seven years.</strong> Gracie originally recorded a short snippet of the song but never finished it. Fan response over the years was so passionate and sustained that she specifically revisited and completed it for The Secret of Us — one of the most wholesome fan-artist collaborations in her catalog.</p>
+    </div>
+    <div class="fact-item">
+      <span class="fact-icon">🎤</span>
+      <p class="fact-text"><strong>She made her SNL debut on December 14, 2024.</strong> Performing "I Love You, I'm Sorry" and "That's So True" on Saturday Night Live was a milestone that cemented her mainstream arrival — coming just weeks after "That's So True" had topped charts across five countries.</p>
+    </div>
+    <div class="fact-item">
+      <span class="fact-icon">💎</span>
+      <p class="fact-text"><strong>She's a Chanel ambassador.</strong> In October 2024 Gracie became a brand ambassador for Chanel's Coco Crush jewelry collection. In January 2026, Chanel named her the new face of Coco Crush fine jewelry globally — positioning her alongside Blackpink's Jennie in a worldwide campaign. Debuted at the Chateau Marmont.</p>
+    </div>
+    <div class="fact-item">
+      <span class="fact-icon">🏠</span>
+      <p class="fact-text"><strong>She bought a penthouse in Greenwich Village for $5.5 million in March 2025.</strong> Moving from her hometown of Pacific Palisades, LA (which was devastated by the January 2025 wildfires) to a new home in New York City — a move that also mirrors Gracie's increasing international profile and New York creative connections.</p>
+    </div>
+    <div class="fact-item">
+      <span class="fact-icon">🎬</span>
+      <p class="fact-text"><strong>She's making her acting debut in an A24 film.</strong> In January 2026, it was announced that Gracie will appear in Please — an A24 film written and directed by Halina Reijn. Her father is J.J. Abrams, one of the most successful directors alive. The creative apple doesn't fall far.</p>
+    </div>
+    <div class="fact-item">
+      <span class="fact-icon">💿</span>
+      <p class="fact-text"><strong>Good Riddance was recorded with Brian Eno.</strong> The album's closing track "Right now" was co-written and co-produced with ambient music icon Brian Eno — one of the most unexpected collaborations in recent pop music, and a signal that Gracie's creative ambitions extend well beyond her indie-pop lane.</p>
+    </div>
+    <div class="fact-item">
+      <span class="fact-icon">🌍</span>
+      <p class="fact-text"><strong>She performed at the Glastonbury Festival in 2025.</strong> One of the most prestigious festival slots in music — and during her set, she debuted an unreleased song while her boyfriend Paul Mescal danced on her shoulders in the crowd. A moment that instantly became one of her most iconic public appearances.</p>
+    </div>
+    <div class="fact-item">
+      <span class="fact-icon">🏛️</span>
+      <p class="fact-text"><strong>She grew up in Pacific Palisades.</strong> One of the most affluent neighborhoods in LA — which makes her confessional, purposely ordinary, "just a girl in her feelings" artistic persona a fascinating artistic choice and counterpoint to her background. The January 2025 LA wildfires heavily damaged Pacific Palisades, making her FireAid performance personally resonant.</p>
+    </div>
+    <div class="fact-item">
+      <span class="fact-icon">🎸</span>
+      <p class="fact-text"><strong>Her musical influences include Joni Mitchell, Phoebe Bridgers, Elliott Smith, and Taylor Swift.</strong> She's cited Robyn, Simon & Garfunkel, Elvis Costello, Bon Iver, Kate Bush, Lana Del Rey, the 1975, James Blake, Lorde, Metric, and the Killers. A wide, thoughtful range that explains both the folk-pop foundation and the pop polish of her work.</p>
+    </div>
+    <div class="fact-item" style="border-bottom:none">
+      <span class="fact-icon">🌟</span>
+      <p class="fact-text"><strong>Won the American Music Award for New Artist of the Year on May 26, 2025.</strong> A mainstream industry validation that, combined with her chart dominance with "That's So True" and her Grammy nomination, firmly established 2024–2025 as the moment Gracie Abrams became a major pop star — not just a beloved indie darling.</p>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <p>✦ for the gracies ✦</p>
+  <p style="margin-top:4px">gracie abrams fan deep dive · updated <span>may 2026</span></p>
+</footer>
+
+<button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">↑</button>
+
+<script>
+function show(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('#nav button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function setStickyOffset() {
+  const navH = document.getElementById('nav').getBoundingClientRect().height;
+  document.querySelectorAll('.album-header-sticky, .tour-header-sticky').forEach(el => {
+    el.style.top = navH + 'px';
+  });
+}
+setStickyOffset();
+window.addEventListener('resize', setStickyOffset);
+
+const topBtn = document.getElementById('back-to-top');
+window.addEventListener('scroll', () => {
+  topBtn.classList.toggle('visible', window.scrollY > 300);
+});
+</script>
+
+</body>
+</html>
